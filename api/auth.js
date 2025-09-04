@@ -13,7 +13,16 @@ export default function handler(req, res) {
     try {
       const crypto = require("crypto")
 
-      const privateKey = process.env.IMAGEKIT_PRIVATE_KEY || "private_ocuHLfwK9n883Jf7W+xt4TAQGUY="
+      const privateKey = process.env.IMAGEKIT_PRIVATE_KEY
+
+      if (!privateKey) {
+        console.error("IMAGEKIT_PRIVATE_KEY environment variable is not set")
+        return res.status(500).json({
+          error: "ImageKit private key not configured",
+          message: "Please set IMAGEKIT_PRIVATE_KEY environment variable in Vercel",
+        })
+      }
+
       const token = req.query.token || crypto.randomUUID()
       const expire = req.query.expire || Math.floor(Date.now() / 1000) + 2400
 
@@ -22,6 +31,8 @@ export default function handler(req, res) {
         .update(token + expire)
         .digest("hex")
 
+      console.log("[v0] ImageKit auth successful for token:", token)
+
       res.status(200).json({
         token: token,
         expire: expire,
@@ -29,7 +40,7 @@ export default function handler(req, res) {
       })
     } catch (error) {
       console.error("ImageKit auth error:", error)
-      res.status(500).json({ error: "Authentication failed" })
+      res.status(500).json({ error: "Authentication failed", details: error.message })
     }
   } else {
     res.status(405).json({ error: "Method not allowed" })
