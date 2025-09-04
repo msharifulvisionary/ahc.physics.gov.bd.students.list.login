@@ -1,8 +1,20 @@
 {
-  "name": "my-v0-project",
-  "version": "0.1.0",
+  "name": "student-profile-system",
+  "version": "1.0.0",
   "private": true,
+  "type": "module",
   "scripts": {
-    "build": "echo 'no build script'"
+    "dev": "node auth-server.js",
+    "build": "echo 'Static HTML project - no build needed'",
+    "start": "node auth-server.js",
+    "lint": "echo 'No linting configured'"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
   }
 }
