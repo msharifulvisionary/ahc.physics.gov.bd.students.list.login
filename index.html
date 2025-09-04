@@ -1689,19 +1689,22 @@
             const file = event.target.files[0];
             if (!file || !currentUser) return;
 
+            console.log("[v0] Starting image upload process");
+            console.log("[v0] File details:", file.name, file.size, file.type);
+            
+            if (!window.imagekit) {
+                console.error("[v0] ImageKit not initialized");
+                alert('ImageKit সিস্টেম লোড হয়নি। পেজ রিফ্রেশ করুন।');
+                return;
+            }
+
             try {
-                // Show loading state
-                profileImagePreview.style.opacity = '0.5';
-
-                // Upload to ImageKit
-                if (!window.imagekit) {
-                    throw new Error('ImageKit not initialized');
-                }
-
+                console.log("[v0] Calling ImageKit upload...");
                 const uploadResult = await new Promise((resolve, reject) => {
                     window.imagekit.upload({
                         file: file,
                         fileName: `student_${currentUser.roll}_${Date.now()}.jpg`,
+                        folder: "/student_profiles/",
                         tags: [`student_${currentUser.roll}`, 'profile_picture']
                     }, function(err, result) {
                         if (err) reject(err);
@@ -1728,7 +1731,8 @@
                 profileImagePreview.style.opacity = '1';
 
             } catch (error) {
-                console.error('Image upload error:', error);
+                console.error("[v0] Image upload error:", error);
+                console.error("[v0] Error details:", error.message, error.stack);
                 alert('ছবি আপলোড করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
                 profileImagePreview.style.opacity = '1';
             }
