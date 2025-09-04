@@ -1709,8 +1709,11 @@
                     });
                 });
 
+                const documentId = currentUser.actualRoll ? currentUser.actualRoll.toString() : currentUser.roll.toString();
+                console.log("[v0] Saving image to document ID:", documentId);
+
                 // Update Firebase with image URL
-                await window.updateDoc(window.doc(window.db, 'students', currentUser.roll.toString()), {
+                await window.updateDoc(window.doc(window.db, 'students', documentId), {
                     profileImageUrl: uploadResult.url,
                     imageUploadedAt: new Date().toISOString()
                 });
