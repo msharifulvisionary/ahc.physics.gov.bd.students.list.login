@@ -10,22 +10,27 @@ export default function handler(req, res) {
   }
 
   if (req.method === "GET") {
-    const crypto = require("crypto")
+    try {
+      const crypto = require("crypto")
 
-    const privateKey = "private_ocuHLfwK9n883Jf7W+xt4TAQGUY="
-    const token = req.query.token || crypto.randomUUID()
-    const expire = req.query.expire || Math.floor(Date.now() / 1000) + 2400
+      const privateKey = process.env.IMAGEKIT_PRIVATE_KEY || "private_ocuHLfwK9n883Jf7W+xt4TAQGUY="
+      const token = req.query.token || crypto.randomUUID()
+      const expire = req.query.expire || Math.floor(Date.now() / 1000) + 2400
 
-    const signature = crypto
-      .createHmac("sha1", privateKey)
-      .update(token + expire)
-      .digest("hex")
+      const signature = crypto
+        .createHmac("sha1", privateKey)
+        .update(token + expire)
+        .digest("hex")
 
-    res.status(200).json({
-      token: token,
-      expire: expire,
-      signature: signature,
-    })
+      res.status(200).json({
+        token: token,
+        expire: expire,
+        signature: signature,
+      })
+    } catch (error) {
+      console.error("ImageKit auth error:", error)
+      res.status(500).json({ error: "Authentication failed" })
+    }
   } else {
     res.status(405).json({ error: "Method not allowed" })
   }
