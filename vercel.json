@@ -1,5 +1,7 @@
 {
   "version": 2,
+  "buildCommand": "echo 'Static HTML project - no build needed'",
+  "outputDirectory": ".",
   "rewrites": [
     {
       "source": "/api/(.*)",
